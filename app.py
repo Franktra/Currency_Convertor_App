@@ -1,36 +1,33 @@
 import streamlit as st
+import requests
 
-def add_task(task):
-    tasks.append(task)
+def convert_currency(amount, from_currency, to_currency):
+    url = f"https://api.exchangerate-api.com/v4/latest/{from_currency}"
+    response = requests.get(url)
+    data = response.json()
 
-def delete_task(task):
-    if task in tasks:
-        tasks.remove(task)
+    if to_currency not in data["rates"]:
+        return None
 
-def view_tasks():
-    if len(tasks) == 0:
-        st.write("Your to-do list is empty.")
-    else:
-        st.write("Your to-do list:")
-        for i, task in enumerate(tasks, start=1):
-            st.write(f"{i}. {task}")
+    exchange_rate = data["rates"][to_currency]
+    converted_amount = amount * exchange_rate
+    return converted_amount
 
 def main():
-    st.title("To-Do List Application")
-    st.write("Enter a task and click 'Add' to add it to your to-do list.")
-    task = st.text_input("Task:")
-    add_button = st.button("Add")
-    if add_button:
-        add_task(task)
-        task = ""
+    st.title("Currency Converter Application")
+    st.write("Enter the amount, select the source currency, and select the target currency to convert.")
 
-    view_tasks()
+    amount = st.number_input("Amount", min_value=0.0)
+    from_currency = st.selectbox("From Currency", ["USD", "EUR", "GBP", "JPY", "CAD"])
+    to_currency = st.selectbox("To Currency", ["USD", "EUR", "GBP", "JPY", "CAD"])
 
-    delete_task_idx = st.number_input("Enter the task number to delete:", min_value=1, max_value=len(tasks), value=1, step=1)
-    delete_button = st.button("Delete")
-    if delete_button and delete_task_idx > 0:
-        delete_task(tasks[delete_task_idx-1])
+    if st.button("Convert"):
+        if amount > 0.0 and from_currency != to_currency:
+            converted_amount = convert_currency(amount, from_currency, to_currency)
+            if converted_amount is not None:
+                st.write(f"{amount} {from_currency} = {converted_amount} {to_currency}")
+            else:
+                st.write("Conversion rate not available.")
 
 if __name__ == "__main__":
-    tasks = []
     main()
