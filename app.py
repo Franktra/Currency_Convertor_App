@@ -4,7 +4,8 @@ def add_task(task):
     tasks.append(task)
 
 def delete_task(task):
-    tasks.remove(task)
+    if task in tasks:
+        tasks.remove(task)
 
 def view_tasks():
     if len(tasks) == 0:
@@ -24,6 +25,11 @@ def main():
         task = ""
 
     view_tasks()
+
+    delete_task_idx = st.number_input("Enter the task number to delete:", min_value=1, max_value=len(tasks), value=0, step=1)
+    delete_button = st.button("Delete")
+    if delete_button and delete_task_idx > 0:
+        delete_task(tasks[delete_task_idx-1])
 
 if __name__ == "__main__":
     tasks = []
