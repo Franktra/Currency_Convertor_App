@@ -26,7 +26,7 @@ def main():
 
     view_tasks()
 
-    delete_task_idx = st.number_input("Enter the task number to delete:", min_value=1, max_value=len(tasks), value=0, step=1)
+    delete_task_idx = st.number_input("Enter the task number to delete:", min_value=1, max_value=len(tasks), value=1, step=1)
     delete_button = st.button("Delete")
     if delete_button and delete_task_idx > 0:
         delete_task(tasks[delete_task_idx-1])
